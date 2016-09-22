@@ -47,7 +47,7 @@ module Globalize
 
         if name == :locale
           self.try(:locale).presence || self.translation.locale
-        elsif self.class.translated?(name)
+        elsif translated?(name)
           if (value = globalize.fetch(options[:locale] || Globalize.locale, name))
             value
           else
@@ -62,7 +62,9 @@ module Globalize
         translated_attribute_names.map(&:to_s) + super
       end
 
-      delegate :translated?, :to => :class
+      def translated?(name)
+        self.class.translated?(name) && self.class::Translation.column_names.include?(name.to_s)
+      end
 
       def translated_attributes
         translated_attribute_names.inject({}) do |attributes, name|
