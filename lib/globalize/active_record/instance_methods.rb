@@ -58,7 +58,9 @@ module Globalize
         translated_attribute_names.map(&:to_s) + super
       end
 
-      delegate :translated?, :to => :class
+      def translated?(name)
+        self.class.translated?(name) && self.class::Translation.column_names.include?(name.to_s)
+      end
 
       def translated_attributes
         translated_attribute_names.inject({}) do |attributes, name|
